@@ -2,8 +2,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import UserSerializer
+
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST 
 from django.contrib.auth import get_user_model
 from django.http.response import JsonResponse
 
@@ -32,6 +36,8 @@ def signup(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def follow(request, user_pk):
 
     person = get_object_or_404(get_user_model(), pk=user_pk)
