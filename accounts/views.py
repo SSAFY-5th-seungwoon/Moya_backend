@@ -55,3 +55,24 @@ def follow(request, user_pk):
         }
         return JsonResponse(follow_status)
     return redirect('accounts:profile', person.username)
+# import code for encoding urls and generating md5 hashes
+import urllib, hashlib # gravatar library
+
+@api_view(['get'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def profile(request, username):    
+    person = get_object_or_404(get_user_model(), username=username)
+        # Set your variables here
+    email = person.email
+    email_hash = hashlib.md5(request.user.email.encode('utf-8').strip().lower()).hexdigest() #gravatar hash 
+    context ={
+        'username': person.username,
+        'email': person.email,
+        'created_at': person.date_joined,
+        'followers':person.followers.count(),
+        'followings':person.followings.count(),
+        'email_hash':email_hash,
+    }
+    return JsonResponse(context)
+ 
