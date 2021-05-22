@@ -4,5 +4,6 @@ from . import views
 app_name = 'community'
 
 urlpatterns = [
-
+    path('', views.reviews, name ='reviews'),
+    path('<int:movie_id>/review/',views.review_craeted, name='review_craeted')
 ] 
