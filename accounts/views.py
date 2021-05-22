@@ -38,23 +38,23 @@ def signup(request):
 @api_view(['POST'])
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
-def follow(request, user_pk):
+def follow(request, username):
 
-    person = get_object_or_404(get_user_model(), pk=user_pk)
+    person = get_object_or_404(get_user_model(), username=username)
     user = request.user
     if person != user:
         if person.followers.filter(pk=user.pk).exists():
             person.followers.remove(user)
-            follow = False
+            follow = True
         else:
             person.followers.add(user)
-            follow = True
+            follow = False
         follow_status ={
             'follow':follow,
             'count':person.followers.count(),
         }
         return JsonResponse(follow_status)
-    return redirect('accounts:profile', person.username)
+    # return redirect('accounts:profile', person.username)
 # import code for encoding urls and generating md5 hashes
 import urllib, hashlib # gravatar library
 
