@@ -8,8 +8,7 @@ urlpatterns = [
     # path('<int:movie_pk>/', views.detail, name='detail'),
     # path('tournament', views.tournament, name='tournament'),
     path('', views.main),
-    path('<movie_pk>/detail', views.movie_detail),
     path('genre_data', views.genre_data),
-    path('movie_data2', views.movie_data2)
-
+    path('movie_data2', views.movie_data2),
+    path('detail/<int:movie_pk>', views.movie_detail),
 ]

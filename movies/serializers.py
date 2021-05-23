@@ -24,12 +24,13 @@ class MovieSerializer(serializers.ModelSerializer): # 데이터 넣을 때
         model = Movie
         fields="__all__"
 
-class MovieDetailSerializer(serializers.ModelSerializer): # 일단 만들어 둠
-    genres = GenreSerializerId(many=True)
+class MovieDetailSerializer(serializers.ModelSerializer): # 영화상세
+    genres = GenreSerializer(many=True, read_only=True)
 
     class Meta : 
         model = Movie
-        exclude = ('video_path', )
+        fields = "__all__"
+    
 
 class TournamentSerializer(serializers.ModelSerializer): 
     class Meta : 
