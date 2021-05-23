@@ -55,7 +55,12 @@ def movie_detail(request, movie_pk) :
     # movieSerializer = MovieSerializer(data = recommended_movies, many=True)
     return Response(serializer.data)
 
-
+@api_view(['GET'])
+def tournament(request) :
+    random_movies = Movie.objects.order_by('?')[:16]
+    serializer = MovieSerializer(data = random_movies, many=True)
+    print(serializer.is_valid())
+    return Response(serializer.data)
 
 # 장르 데이터베이스에 넣기
 @api_view(['GET'])
