@@ -11,4 +11,5 @@ urlpatterns = [
     path('genre_data', views.genre_data),
     path('movie_data2', views.movie_data2),
     path('detail/<int:movie_pk>', views.movie_detail),
+    path('tournament', views.tournament)
 ]
