@@ -25,16 +25,17 @@ class ReviewListSerializer(serializers.ModelSerializer):
 #         exclude = ('like_users','funny_users','helpful_users')
 #         read_only_fields =('movie','user')
 
-class ReviewSerializer(serializers.ModelSerializer):
-    movie = MovieSerializer(read_only=True)
-    class Meta : 
-        model = Review
-        fields = "__all__"
-        # exclude = ('like_users','funny_users','helpful_users')
-        read_only_fields =('movie','user','like_users','funny_users','helpful_users')
-
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta : 
         model = Comment
         fields = "__all__"
+
+class ReviewSerializer(serializers.ModelSerializer):
+    movie = MovieSerializer(read_only=True)
+    comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
+    class Meta : 
+        model = Review
+        fields = "__all__"
+        # exclude = ('like_users','funny_users','helpful_users')
+        read_only_fields =('movie','user','like_users','funny_users','helpful_users')

@@ -21,6 +21,14 @@ def reviews(request):
     reviewserializer = ReviewSerializer(data=reviews, many=True)
     print(reviewserializer.is_valid())
     return Response(reviewserializer.data)
+@api_view(['get'])
+def review_detail(request,review_id):
+    review = get_object_or_404(Review, id=review_id)
+    review_list = [review]
+    
+    reviewserializer = ReviewSerializer(data=review_list, many=True)
+    print(reviewserializer.is_valid())
+    return Response(reviewserializer.data)
 
 @api_view(['post'])
 @authentication_classes([JSONWebTokenAuthentication])
