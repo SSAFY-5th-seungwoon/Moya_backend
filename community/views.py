@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from .models import Review, Comment
 from movies.models import Movie
-from .serializers import ReviewSerializer,ReviewListSerializer
+from .serializers import ReviewSerializer,ReviewListSerializer,CommentSerializer
 
 from django.shortcuts import get_object_or_404,get_list_or_404
 from rest_framework import status
@@ -41,3 +41,97 @@ def review_craeted(request,movie_id):
     if serializer.is_valid(raise_exception=True):
         serializer.save(movie=movie, user = request.user)
         return Response(serializer.data, status= status.HTTP_201_CREATED)
+
+@api_view(['delete'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def review_delete(request,review_id):
+    review = get_object_or_404(Review,pk=review_id)
+    if request.user.pk == review.user.pk:
+        review.delete()
+        data ={
+            'delete':f'데이터 {review_id}번 글이 삭제되었습니다.'
+        }
+        return Response(data,status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+@api_view(['post'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def comment_create(request,review_id):
+    review = get_object_or_404(Review,pk=review_id)
+
+    serializer = CommentSerializer(data =request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(review=review, user = request.user)
+        return Response(serializer.data, status= status.HTTP_201_CREATED)
+
+@api_view(['delete'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def comment_delete(request,comment_id):
+    comment = get_object_or_404(Comment,pk=comment_id)
+    if request.user.pk == comment.user.pk:
+        comment.delete()
+        data ={
+            'delete':f'데이터 {comment_id}번 글이 삭제되었습니다.'
+        }
+        return Response(data,status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['post'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def like(request,review_id):
+    review = get_object_or_404(Review,pk=review_id)
+    user = request.user
+    if review.user_id != user:
+        if review.like_users.filter(pk=user.pk).exists():
+            review.like_users.remove(user)
+            follow = False
+        else:
+            review.like_users.add(user)
+            follow = True
+        follow_status ={
+            'follow':follow,
+            'count':review.like_users.count(),
+        }
+        return JsonResponse(follow_status)
+
+@api_view(['post'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def funny(request,review_id):
+    review = get_object_or_404(Review,pk=review_id)
+    user = request.user
+    if review.user_id != user:
+        if review.funny_users.filter(pk=user.pk).exists():
+            review.funny_users.remove(user)
+            follow = False
+        else:
+            review.funny_users.add(user)
+            follow = True
+        follow_status ={
+            'follow':follow,
+            'count':review.funny_users.count(),
+        }
+        return JsonResponse(follow_status)
+
+@api_view(['post'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def helpful(request,review_id):
+    review = get_object_or_404(Review,pk=review_id)
+    user = request.user
+    if review.user_id != user:
+        if review.helpful_users.filter(pk=user.pk).exists():
+            review.helpful_users.remove(user)
+            follow = False
+        else:
+            review.helpful_users.add(user)
+            follow = True
+        follow_status ={
+            'follow':follow,
+            'count':review.helpful_users.count(),
+        }
+        return JsonResponse(follow_status)
