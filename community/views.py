@@ -135,3 +135,22 @@ def helpful(request,review_id):
             'count':review.helpful_users.count(),
         }
         return JsonResponse(follow_status)
+
+@api_view(['post'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
+def comment_like(request,comment_id):
+    comment = get_object_or_404(Comment,pk=comment_id)
+    user = request.user
+    if comment.user_id != user:
+        if comment.like_users.filter(pk=user.pk).exists():
+            comment.like_users.remove(user)
+            follow = False
+        else:
+            comment.like_users.add(user)
+            follow = True
+        follow_status ={
+            'follow':follow,
+            'count':comment.like_users.count(),
+        }
+        return JsonResponse(follow_status)
