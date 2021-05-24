@@ -1,6 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # from rest_framework import generics
 
 from django.shortcuts import get_object_or_404
@@ -55,12 +58,35 @@ def movie_detail(request, movie_pk) :
     # movieSerializer = MovieSerializer(data = recommended_movies, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def tournament(request) :
-    random_movies = Movie.objects.order_by('?')[:16]
-    serializer = MovieSerializer(data = random_movies, many=True)
-    print(serializer.is_valid())
-    return Response(serializer.data)
+    if request.method == 'GET' :
+        random_movies = Movie.objects.order_by('?')[:16]
+        serializer = MovieSerializer(data = random_movies, many=True)
+        print(serializer.is_valid())
+        return Response(serializer.data)
+    elif request.method =='POST' : 
+        # 작업중
+        movie_id = request.data["movie_id"]
+        user = request.user
+        print(user)
+        movie = Movie.objects.get(pk=movie_id)
+        tournament = Tournament.objects.create(
+            movie = movie, 
+            user = request.user
+        )
+
+        serializer = TournamentSerializer(data= tournament)
+        print(serializer.is_valid())
+        return Response(serializer.data)
+
+        
+        
+
+
+
 
 # 장르 데이터베이스에 넣기
 @api_view(['GET'])
@@ -125,5 +151,5 @@ def movie_data2(request) :
                 genre = Genre.objects.get(pk=movie_genre.get("id"))
                 movie.genres.add(genre)
 
-
     return Response()
+
