@@ -15,4 +15,5 @@ urlpatterns = [
     path('<int:review_id>/like/',views.like, name='like'),
     path('<int:review_id>/funny/',views.funny, name='funny'),
     path('<int:review_id>/helpful/',views.helpful, name='helpful'),
+    path('<int:comment_id>/comment/like/',views.comment_like, name='comment_like')
 ] 
