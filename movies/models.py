@@ -6,6 +6,10 @@ class Genre(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
 
+    def __str__(self) : # admin 페이지에서 편하게 보기 위함
+        return self.name
+
+
 class Movie(models.Model):
     id = models.IntegerField(primary_key=True)
     genres = models.ManyToManyField(Genre)
