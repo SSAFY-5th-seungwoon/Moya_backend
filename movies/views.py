@@ -42,7 +42,7 @@ def main(request) :
 def movie_detail(request, movie_pk) :
     movie = Movie.objects.get(pk=movie_pk)
     movie_list = [movie]
-
+    # serializer = MovieDetailSerializer(data = movie)
     serializer = MovieDetailSerializer(data = movie_list, many=True)
     # 한영화의 genres에 포함된 genre를 포함하는 genres를 가지고 있는 영화들을 찾고 싶다. - 해결못함
     '''
