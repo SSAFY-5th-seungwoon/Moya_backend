@@ -7,8 +7,13 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 # from rest_framework import generics
 
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from .models import Movie, Genre, Tournament
 from .serializers import MovieSerializer, GenreSerializer, TournamentSerializer, MovieDetailSerializer
+
+from community.models import Review
+from community.serializers import ReviewListSerializer
+
 
 from rest_framework.views import APIView
 from django.http import Http404
@@ -85,8 +90,21 @@ def tournament(request) :
         print(serializer.is_valid())
         return Response(serializer.data)
 
-        
-        
+@api_view(['GET'])
+def mypageMovie(request, username) :
+    person = get_object_or_404(get_user_model(), username=username)
+    winMovies = Movie.objects.filter(tournament__user=person) # OneToMany 접근
+    likeMovies = Review.objects.filter(user=person).filter(liked=True).order_by('-created_at')
+
+    winMoviesSerializer = MovieSerializer(data = winMovies, many=True)
+    likeMoviesSerializer = ReviewListSerializer(data= likeMovies, many=True)
+
+    print(winMoviesSerializer.is_valid(), likeMoviesSerializer.is_valid())
+    context = {
+        'winMovies' : winMoviesSerializer.data, 
+        'likeMovies' : likeMoviesSerializer.data
+    }
+    return Response(context)
 
 
 
