@@ -48,7 +48,7 @@ def movie_detail(request, movie_pk) :
     # 한영화의 genres에 포함된 genre를 포함하는 genres를 가지고 있는 영화들을 찾고 싶다. - 해결
     
     genres = movie.genres.all().values_list('id', flat=True) # 영화의 모든 genre를 id 객체로 가져오기
-    movies_same_genre = Movie.objects.filter(genres__id__in=genres).order_by('-vote_count')[:20]
+    movies_same_genre = Movie.objects.filter(genres__id__in=genres).order_by('-vote_count').distinct()[:20]
 
     # recommended_movies = Movie.objects.filter(genres = movie.genres.all())[:10]
     same_genre_serializer = MovieDetailSerializer(data = movies_same_genre, many=True)

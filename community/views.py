@@ -18,7 +18,7 @@ from django.http.response import JsonResponse
 def reviews(request):
     
     page = int(request.GET.get('page'))
-    all_reviews = Review.objects.all()
+    all_reviews = Review.objects.all().order_by('-created_at')
     p = Paginator(all_reviews, 4, allow_empty_first_page = True)
     reviews = p.page(page)
 
