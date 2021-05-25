@@ -42,21 +42,24 @@ def main(request) :
 def movie_detail(request, movie_pk) :
     movie = Movie.objects.get(pk=movie_pk)
     movie_list = [movie]
-
+    # serializer = MovieDetailSerializer(data = movie)
     serializer = MovieDetailSerializer(data = movie_list, many=True)
-    # 한영화의 genres에 포함된 genre를 포함하는 genres를 가지고 있는 영화들을 찾고 싶다. - 해결못함
-    '''
-    SELECT * 
-    FROM moives
-    WHERE genres in (SELECT genres FROM movies where id = movie_pk)
-    '''
+
+    # 한영화의 genres에 포함된 genre를 포함하는 genres를 가지고 있는 영화들을 찾고 싶다. - 해결
+    
+    genres = movie.genres.all().values_list('id', flat=True) # 영화의 모든 genre를 id 객체로 가져오기
+    movies_same_genre = Movie.objects.filter(genres__id__in=genres).order_by('-vote_count')[:20]
 
     # recommended_movies = Movie.objects.filter(genres = movie.genres.all())[:10]
-
-    print(serializer.is_valid())
+    same_genre_serializer = MovieDetailSerializer(data = movies_same_genre, many=True)
+    print(serializer.is_valid(), same_genre_serializer.is_valid())
+    context = {
+        "movie" : serializer.data, 
+        "same_genres" : same_genre_serializer.data,
+    }
 
     # movieSerializer = MovieSerializer(data = recommended_movies, many=True)
-    return Response(serializer.data)
+    return Response(context)
 
 @api_view(['GET', 'POST'])
 @authentication_classes([JSONWebTokenAuthentication])

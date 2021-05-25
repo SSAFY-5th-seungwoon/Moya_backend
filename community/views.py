@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .models import Review, Comment
 from movies.models import Movie
 from .serializers import ReviewSerializer,ReviewListSerializer,CommentSerializer
+from django.core.paginator import Paginator
 
 from django.shortcuts import get_object_or_404,get_list_or_404
 from rest_framework import status
@@ -15,7 +16,12 @@ from django.http.response import JsonResponse
 # Create your views here.
 @api_view(['get'])
 def reviews(request):
-    reviews = Review.objects.all()[:20]
+    
+    page = int(request.GET.get('page'))
+    all_reviews = Review.objects.all()
+    p = Paginator(all_reviews, 4, allow_empty_first_page = True)
+    reviews = p.page(page)
+
     #review = get_list_or_404(Review)
     #reviewserializer = ReviewListSerializer(review, many=True)    
     reviewserializer = ReviewSerializer(data=reviews, many=True)
