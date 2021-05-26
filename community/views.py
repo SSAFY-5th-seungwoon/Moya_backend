@@ -30,19 +30,25 @@ def reviews(request):
     reviewserializer = ReviewSerializer(data=reviews, many=True)
     print(reviewserializer.is_valid())
     return Response(reviewserializer.data)
+
 @api_view(['get'])
+@authentication_classes([JSONWebTokenAuthentication])
+@permission_classes([IsAuthenticated])
 def review_detail(request,review_id):
     review = get_object_or_404(Review, id=review_id)
     review_list = [review]
-    
+
+    reviewserializer = ReviewSerializer(data=review_list, many=True)
+
     likedMovie_users=get_user_model().objects.filter(review__liked=True).distinct()
     userSerializer = UserDetailSerializer(data = likedMovie_users, many=True)
 
-    reviewserializer = ReviewSerializer(data=review_list, many=True)
-    print(reviewserializer.is_valid(), userSerializer.is_valid())
+    loginUserSerializer = UserDetailSerializer(data=[request.user], many=True)
+    print(reviewserializer.is_valid(), userSerializer.is_valid(),loginUserSerializer.is_valid())
     context={
         "0" : reviewserializer.data[0],
         "1" : userSerializer.data,
+        "2" : loginUserSerializer.data,
     }
 
     return Response( context)
