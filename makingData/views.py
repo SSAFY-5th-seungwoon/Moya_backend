@@ -3,12 +3,15 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
+from django.contrib.auth import get_user_model
 from movies.models import Movie, Genre
 from movies.serializers import GenreSerializer
+
 
 import requests
 import logging, traceback
 import datetime
+from django_seed import Seed
 
 # Create your views here.
 
@@ -77,3 +80,7 @@ def movie_data2(request) :
 
     return Response()
 
+# 영화 데이터 데이터베이스에 넣기 
+@api_view(['GET'])
+def dummyData(request) :
+    seeder = Seed.seeder()
