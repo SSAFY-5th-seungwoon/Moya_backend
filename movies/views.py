@@ -88,7 +88,7 @@ def mypageMovie(request, username) :
     person = get_object_or_404(get_user_model(), username=username)
     winMovies = Movie.objects.filter(tournament__user=person) # OneToMany 접근
     # likeMovies = Review.objects.filter(user=person).filter(liked=True).order_by('-created_at')
-    likeMovies = Movie.objects.filter(review__user=person)
+    likeMovies = Movie.objects.filter(review__user=person).distinct()
 
     winMoviesSerializer = MovieSerializer(data = winMovies, many=True)
     likeMoviesSerializer = MovieSerializer(data= likeMovies, many=True)

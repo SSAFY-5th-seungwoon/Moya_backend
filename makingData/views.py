@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from movies.models import Movie, Genre
 from movies.serializers import GenreSerializer
-
+from community.models import Review
 
 import requests
 import logging, traceback
@@ -80,9 +80,17 @@ def movie_data2(request) :
 
     return Response()
 
-# 영화 데이터 데이터베이스에 넣기 
+# user, community 에 더미 데이터 넣기
 @api_view(['GET'])
 def dummyData(request) :
-    seeder = Seed.seeder()
+    seeder = Seed.seeder(locale)
 
-    
+    seeder.add_entity(get_user_model(), 50)
+    seeder.add_entity(Review, 100)
+
+    inserted_pks= seeder.execute()
+    return Response(inserted_pks)
+
+
+
+
