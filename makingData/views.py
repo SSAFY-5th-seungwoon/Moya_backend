@@ -84,3 +84,5 @@ def movie_data2(request) :
 @api_view(['GET'])
 def dummyData(request) :
     seeder = Seed.seeder()
+
+    
