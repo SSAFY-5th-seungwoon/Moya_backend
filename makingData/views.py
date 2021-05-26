@@ -11,6 +11,8 @@ from community.models import Review
 import requests
 import logging, traceback
 import datetime
+import random
+from faker import Faker
 from django_seed import Seed
 
 # Create your views here.
@@ -83,12 +85,31 @@ def movie_data2(request) :
 # user, community 에 더미 데이터 넣기
 @api_view(['GET'])
 def dummyData(request) :
-    seeder = Seed.seeder(locale)
+    fake = Faker(locale='ko_KR')
+    seeder = Seed.seeder('ko_KR')
 
-    seeder.add_entity(get_user_model(), 50)
-    seeder.add_entity(Review, 100)
+    # 계정 50개 만들기
+    seeder.add_entity(get_user_model(), 50, {
+        "username" : lambda x : seeder.faker.name(),
+        "email" : lambda x : seeder.faker.email(),
+        "password" : lambda x : seeder.faker.password(),
+    })
 
-    inserted_pks= seeder.execute()
+    movie_all = Movie.objects.all()
+    user_all = get_user_model().objects.all()
+    print("실행1")
+    
+    # 게시글 100개 만들기
+    # seeder.faker.address()/name()/text()/sentence()를 사용가능
+    seeder.add_entity(Review, 100,{
+        "title" : lambda x : seeder.faker.sentence(),
+        "liked" : True,
+        "content" : lambda x : seeder.faker.text(),
+        "movie" : lambda x : random.choice(movie_all),
+        "user" : lambda x : random.choice(user_all)
+    })
+    print("실행2")
+    inserted_pks = seeder.execute()
     return Response(inserted_pks)
 
 

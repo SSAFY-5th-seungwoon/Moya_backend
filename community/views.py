@@ -19,17 +19,20 @@ from django.http.response import JsonResponse
 # Create your views here.
 @api_view(['get'])
 def reviews(request):
-    
-    page = int(request.GET.get('page'))
-    all_reviews = Review.objects.all().order_by('-created_at')
-    p = Paginator(all_reviews, 4, allow_empty_first_page = True)
-    reviews = p.page(page)
+    try :
+        page = int(request.GET.get('page'))
+        all_reviews = Review.objects.all().order_by('-created_at')
+        p = Paginator(all_reviews, 8, allow_empty_first_page = True)
+        reviews = p.page(page)
 
-    #review = get_list_or_404(Review)
-    #reviewserializer = ReviewListSerializer(review, many=True)    
-    reviewserializer = ReviewSerializer(data=reviews, many=True)
-    print(reviewserializer.is_valid())
-    return Response(reviewserializer.data)
+        #review = get_list_or_404(Review)
+        #reviewserializer = ReviewListSerializer(review, many=True)    
+        reviewserializer = ReviewSerializer(data=reviews, many=True)
+        print(reviewserializer.is_valid())
+        return Response(reviewserializer.data)
+    except :
+        return Response(status=status.HTTP_404_NOT_FOUND, data={'message' : '게시글 끝입니다'})
+
 
 @api_view(['get'])
 @authentication_classes([JSONWebTokenAuthentication])
@@ -40,7 +43,7 @@ def review_detail(request,review_id):
 
     reviewserializer = ReviewSerializer(data=review_list, many=True)
 
-    likedMovie_users=get_user_model().objects.filter(review__liked=True).distinct()
+    likedMovie_users=get_user_model().objects.filter(review__liked=True, review__movie=review.movie).distinct()
     userSerializer = UserDetailSerializer(data = likedMovie_users, many=True)
 
     loginUserSerializer = UserDetailSerializer(data=[request.user], many=True)
