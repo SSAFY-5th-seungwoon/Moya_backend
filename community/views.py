@@ -5,6 +5,9 @@ from movies.models import Movie
 from .serializers import ReviewSerializer,ReviewListSerializer,CommentSerializer
 from django.core.paginator import Paginator
 
+from django.contrib.auth import get_user_model
+from accounts.serializers import UserDetailSerializer
+
 from django.shortcuts import get_object_or_404,get_list_or_404
 from rest_framework import status
 from rest_framework.response import Response
@@ -32,9 +35,17 @@ def review_detail(request,review_id):
     review = get_object_or_404(Review, id=review_id)
     review_list = [review]
     
+    likedMovie_users=get_user_model().objects.filter(review__liked=True).distinct()
+    userSerializer = UserDetailSerializer(data = likedMovie_users, many=True)
+
     reviewserializer = ReviewSerializer(data=review_list, many=True)
-    print(reviewserializer.is_valid())
-    return Response(reviewserializer.data)
+    print(reviewserializer.is_valid(), userSerializer.is_valid())
+    context={
+        "0" : reviewserializer.data[0],
+        "1" : userSerializer.data,
+    }
+
+    return Response( context)
 
 @api_view(['post'])
 @authentication_classes([JSONWebTokenAuthentication])

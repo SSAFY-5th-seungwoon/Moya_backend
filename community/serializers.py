@@ -3,6 +3,8 @@ from movies.serializers import MovieDetailSerializer
 from accounts.serializers import UserDetailSerializer
 from .models import Review
 from .models import Comment
+
+
 # from movies.models import Movie
 # class MovieSerializer(serializers.ModelSerializer):
    
@@ -12,7 +14,9 @@ from .models import Comment
 
 class ReviewListSerializer(serializers.ModelSerializer):
     # movie_set = MovieSerializer(many=True, read_only=True)    
-    # movie_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)   
+    # movie_set = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+
     class Meta:
         model =Review
         fields = "__all__"
@@ -39,6 +43,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     movie = MovieDetailSerializer(read_only=True)
     comment_set = CommentSerializer(read_only=True,many=True)
     comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
+
+    
     class Meta : 
         model = Review
         fields = "__all__"
