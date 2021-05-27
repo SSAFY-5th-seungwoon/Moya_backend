@@ -86,7 +86,7 @@ def tournament(request) :
 @api_view(['GET'])
 def mypageMovie(request, username) :
     person = get_object_or_404(get_user_model(), username=username)
-    winMovies = Movie.objects.filter(tournament__user=person) # OneToMany 접근
+    winMovies = Movie.objects.filter(tournament__user=person).order_by('-tournament__created_at') # OneToMany 접근
     # likeMovies = Review.objects.filter(user=person).filter(liked=True).order_by('-created_at')
     likeMovies = Movie.objects.filter(review__user=person).distinct()
 
