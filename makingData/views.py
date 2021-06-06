@@ -14,8 +14,12 @@ import datetime
 import random
 from faker import Faker
 from django_seed import Seed
-
+from django.http.response import JsonResponse
 # Create your views here.
+
+@api_view(['GET'])
+def wakeUp(request) :
+    return JsonResponse({'message' : '켜져욧'})
 
 # 장르 데이터베이스에 넣기
 @api_view(['GET'])
