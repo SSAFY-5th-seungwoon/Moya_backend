@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -124,16 +125,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"(?:https?:\/\/)127.0.0.1:*",
-    r"(?:https?:\/\/)localhost:*",
-]
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"(?:https?:\/\/)127.0.0.1:*",
+#     r"(?:https?:\/\/)localhost:*",
+# ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -147,3 +148,8 @@ import datetime
 JWT_AUTH = {
  'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
 }
+
+# Heroku: Update database configuration from $DATABASE_URL.
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
