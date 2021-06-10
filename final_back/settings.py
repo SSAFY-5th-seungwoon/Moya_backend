@@ -29,7 +29,7 @@ DEBUG = True
 DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": lambda request: True,
 }
-INTERNAL_IPS = ['127.0.0.1',]
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -133,10 +133,17 @@ USE_L10N = True
 
 USE_TZ = True
 
+# 2. 모든 Origin 허용
+CORS_ALLOW_ALL_ORIGINS = True
+
 # CORS_ALLOWED_ORIGIN_REGEXES = [
 #     r"(?:https?:\/\/)127.0.0.1:*",
 #     r"(?:https?:\/\/)localhost:*",
 # ]
+
+
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

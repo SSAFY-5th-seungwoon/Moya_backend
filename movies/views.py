@@ -18,9 +18,9 @@ from django.http.response import JsonResponse
 
 @api_view(['GET'])
 def main(request) :
-    latest_movies = Movie.objects.order_by('-release_date')[:10]
-    highscore_movies = Movie.objects.order_by('-vote_average')[:10]
-    like_movies = Movie.objects.order_by('-vote_count')[:10]
+    latest_movies = Movie.objects.order_by('-release_date').prefetch_related('genres')[:20]
+    highscore_movies = Movie.objects.order_by('-vote_average').prefetch_related('genres')[:20]
+    like_movies = Movie.objects.order_by('-vote_count').prefetch_related('genres')[:20]
 
     latest_serializer = MovieSerializer(data=latest_movies, many=True)
     highscore_serializer = MovieSerializer(data=highscore_movies, many=True)
