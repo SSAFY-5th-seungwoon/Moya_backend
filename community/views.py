@@ -21,16 +21,17 @@ from django.http.response import JsonResponse
 def reviews(request):
     try :
         page = int(request.GET.get('page'))
-        all_reviews = Review.objects.all().order_by('-created_at')
+        all_reviews = Review.objects.all().prefetch_related('comment_set').prefetch_related('movie__genres').order_by('-created_at')
         p = Paginator(all_reviews, 8, allow_empty_first_page = True)
         reviews = p.page(page)
 
         #review = get_list_or_404(Review)
         #reviewserializer = ReviewListSerializer(review, many=True)    
-        reviewserializer = ReviewSerializer(data=reviews, many=True)
+        reviewserializer = ReviewListSerializer(data=reviews, many=True)
         print(reviewserializer.is_valid())
         return Response(reviewserializer.data)
-    except :
+    except Exception as e:
+        # print(e)
         return Response(status=status.HTTP_404_NOT_FOUND, data={'message' : '게시글 끝입니다'})
 
 
@@ -38,7 +39,8 @@ def reviews(request):
 @authentication_classes([JSONWebTokenAuthentication])
 @permission_classes([IsAuthenticated])
 def review_detail(request,review_id):
-    review = get_object_or_404(Review, id=review_id)
+    
+    review = Review.objects.get(pk=review_id)
     review_list = [review]
 
     reviewserializer = ReviewSerializer(data=review_list, many=True)

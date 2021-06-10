@@ -36,3 +36,5 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta : 
         model = Tournament
         fields = "__all__"
+
+
