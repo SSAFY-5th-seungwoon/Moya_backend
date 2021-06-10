@@ -33,7 +33,7 @@ def main(request) :
         'highscore_movies' : highscore_serializer.data,
         'like_movies' : like_serializer.data,
     }
-    return JsonResponse(context)
+    return Response(context)
 
 
 @api_view(['GET'])
