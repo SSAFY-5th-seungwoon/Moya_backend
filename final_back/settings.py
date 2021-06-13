@@ -31,7 +31,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 
