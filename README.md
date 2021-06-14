@@ -20,7 +20,7 @@
 ## ✌️ 배포링크
 
 - 프론트(github page로 배포)
-  - https://github.com/swhan9404/Moya_Front
+  - https://swhan9404.github.io/Moya_Front/
 - 백엔드(heroku로 배포)
   - https://moyamoya.herokuapp.com/
 
